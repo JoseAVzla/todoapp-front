@@ -24,8 +24,38 @@
   color: white;
 }
 
+.add-task-form * {
+  margin-bottom: 1em;
+  margin-top: 15px;
+}
+
 .App-link {
   color: #61dafb;
+}
+
+.div {
+  margin: 15px;
+}
+
+.div-header {
+  background-color: rgb(88, 180, 84);
+}
+
+.card {
+  margin-top: 15px;
+}
+
+.card-terminado {
+  margin-top: 15px;
+  opacity: 0.5;
+}
+
+.grid {
+  margin-top: 15px;
+}
+
+.btn-new-todo {
+  margin-top: 15px;
 }
 
 @keyframes App-logo-spin {
