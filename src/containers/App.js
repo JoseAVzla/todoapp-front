@@ -10,7 +10,7 @@ import {
 import Task from "../components/Task";
 
 import "semantic-ui-css/semantic.min.css";
-import { Grid, Form, Header } from "semantic-ui-react";
+import { Grid, Form, Header, Icon } from "semantic-ui-react";
 import "../App.css";
 
 const App = props => {
@@ -87,6 +87,7 @@ const App = props => {
         <Grid.Column>
           <Form className="add-task-form">
             <Header textAlign="center" style={headerStyle}>
+              {<Icon name='add' />}
               Agregar tarea!
             </Header>
 
@@ -116,6 +117,7 @@ const App = props => {
 
         <Grid.Column>
           <Header textAlign="center" style={headerStyle}>
+            {<Icon name='tasks' />}
             Todo.
           </Header>
           {todoList}
@@ -123,6 +125,7 @@ const App = props => {
 
         <Grid.Column>
           <Header textAlign="center" style={headerStyle}>
+            {<Icon name='redo' />}
             En progreso.
           </Header>
           {enProgresoList}
@@ -130,6 +133,7 @@ const App = props => {
 
         <Grid.Column>
           <Header textAlign="center" style={headerStyle}>
+            {<Icon name='check' />}
             Terminado.
           </Header>
           {terminadoList}
