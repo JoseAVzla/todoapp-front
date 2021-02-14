@@ -10,17 +10,17 @@ const TodoReducer = (state, action) => {
       return Object.assign({}, state, {
         tasks: action.payload
       });
-    case "post_tasks":
+    case "post_task":
       return Object.assign({}, state, {
-        postedTasks: action.payload
+        postedTask: action.payload
       });
-    case "update_tasks":
+    case "update_task":
       return Object.assign({}, state, {
-        updatedTasks: action.payload
+        updatedTask: action.payload
       });
-    case "delete_tasks":
+    case "delete_task":
       return Object.assign({}, state, {
-        deletedTasks: action.payload
+        deletedTask: action.payload
       });
     default:
       return state;

@@ -1,21 +1,17 @@
-import Task from "../components/Task";
 import { useState, useEffect } from "react";
 import { connect } from "react-redux";
 
-import { getTasks } from "../actions/todo.actions";
-
-import "../App.css";
-import "semantic-ui-css/semantic.min.css";
 import {
-  Grid,
-  Form,
-  TextArea,
-  Input,
-  Button,
-  Comfirm,
-  GridColumn,
-  Header
-} from "semantic-ui-react";
+  getTasks,
+  postTask,
+  updateTask,
+  deleteTask
+} from "../actions/todo.actions";
+import Task from "../components/Task";
+
+import "semantic-ui-css/semantic.min.css";
+import { Grid, Form, Header } from "semantic-ui-react";
+import "../App.css";
 
 const App = props => {
   const [title, setTitle] = useState("");
@@ -26,57 +22,74 @@ const App = props => {
 
   useEffect(() => {
     props.getTasks();
-    console.log(props.tasks);
-  }, []);
+  });
 
   if (props.tasks != undefined) {
-    console.log("Si hay data");
     todoList = props.tasks
       .filter(task => task.status === "todo")
-      .map(task => <Task todo={task} />);
+      .map(task => (
+        <Task
+          key={task.id}
+          id={task.id}
+          title={task.title}
+          description={task.description}
+          status={task.status}
+          updatedAt={task.updated_at}
+          createdAt={task.created_at}
+        />
+      ));
     enProgresoList = props.tasks
       .filter(task => task.status === "en_progreso")
-      .map(task => <Task todo={task} />);
+      .map(task => (
+        <Task
+          key={task.id}
+          id={task.id}
+          title={task.title}
+          description={task.description}
+          status={task.status}
+          updatedAt={task.updated_at}
+          createdAt={task.created_at}
+        />
+      ));
     terminadoList = props.tasks
       .filter(task => task.status === "terminada")
-      .map(task => <Task todo={task} />);
+      .map(task => (
+        <Task
+          key={task.id}
+          id={task.id}
+          title={task.title}
+          description={task.description}
+          status={task.status}
+          updatedAt={task.updated_at}
+          createdAt={task.created_at}
+        />
+      ));
   }
 
-  // const todo = {
-  //   title: "Lectura",
-  //   description: "Continuar lectura",
-  //   createdAt: "2021-02-11 22:26:59",
-  //   updatedAt: "2021-02-11 22:30:11",
-  //   status: "en_progreso"
-  // };
-
-  const handleClick = () => {
-    console.log("Editando");
+  const handleSubmitTask = async () => {
+    await props.postTask(title, description);
+    setTitle("");
+    setDescription("");
   };
 
   const headerStyle = {
-    "margin-top": "10px"
+    marginTop: "10px"
   };
 
   return (
     <div className={"div"}>
       <div className={"div-header"}>
-        <h1></h1>
-        <Header
-          inverted
-          style={headerStyle}
-          as="h2"
-          icon="tasks"
-          content="Todo App"
-        />
-        <h1></h1>
+        <Header as="h2" icon="tasks" content="Todo App" />
       </div>
+
       <Grid columns="4" widths="equal">
+        
         <Grid.Column>
           <Form className="add-task-form">
             <Header textAlign="center" style={headerStyle}>
               Agregar tarea!
             </Header>
+
             <Form.Group widths="equal">
               <Form.Input
                 fluid
@@ -85,6 +98,7 @@ const App = props => {
                 onChange={e => setTitle(e.target.value)}
               />
             </Form.Group>
+
             <Form.Group widths="equal">
               <Form.TextArea
                 value={description}
@@ -94,26 +108,29 @@ const App = props => {
               />
             </Form.Group>
 
-            <Form.Button color="green" fluid onClick={handleClick}>
+            <Form.Button color="green" fluid onClick={handleSubmitTask}>
               Guardar
             </Form.Button>
           </Form>
         </Grid.Column>
+
         <Grid.Column>
           <Header textAlign="center" style={headerStyle}>
-            Todo
+            Todo.
           </Header>
           {todoList}
         </Grid.Column>
+
         <Grid.Column>
           <Header textAlign="center" style={headerStyle}>
-            En preceso
+            En progreso.
           </Header>
           {enProgresoList}
         </Grid.Column>
+
         <Grid.Column>
           <Header textAlign="center" style={headerStyle}>
-            Terminado
+            Terminado.
           </Header>
           {terminadoList}
         </Grid.Column>
@@ -124,13 +141,16 @@ const App = props => {
 
 const mapStateToProps = state => {
   return {
-    tasks: state.tasks
+    tasks: state.tasks,
+    updatedTask: state.updatedTask,
+    deletedTask: state.deletedTask
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    getTasks: () => dispatch(getTasks())
+    getTasks: () => dispatch(getTasks()),
+    postTask: (title, description) => dispatch(postTask(title, description))
   };
 };
 

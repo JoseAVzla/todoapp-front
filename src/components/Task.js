@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   Dropdown,
@@ -11,112 +11,189 @@ import {
   TextArea
 } from "semantic-ui-react";
 
-const Task = ({ todo }) => {
-  const [estatus, setEstatus] = useState(todo.status);
-  const [editing, setEditing] = useState(false);
-  const [title, setTitle] = useState(todo.title);
-  const [description, setDescription] = useState(todo.description);
+import { connect } from "react-redux";
+import { getTasks, deleteTask, updateTask } from "../actions/todo.actions";
 
-  let sideBarStyle = {
-    width: "100%"
-  };
+function Task(props) {
+  const [status, setStatus] = useState(props.status);
+  const [editing, setEditing] = useState(false);
+  const [title, setTitle] = useState(props.title);
+  const [description, setDescription] = useState(props.description);
 
   const options = [
     {
       key: 1,
+      text: "Todo",
+      value: "todo"
+    },
+    {
+      key: 2,
       text: "En progeso",
       value: "en_progreso"
     },
     {
-      key: 2,
+      key: 3,
       text: "Terminada",
-      value: 'terminada'
+      value: "terminada"
     }
   ];
 
-  const handleClick = () => {
-    setEditing(!editing);
+  useEffect(() => {
+    props.getTasks();
+  });
+
+  const handleDelete = async () => {
+      await props.deleteTask(props.id);
+  };
+
+  const handleSave = async () => {
+    await props.updateTask(props.id, title, description, status);
+    setEditing(false);
+  };
+
+  const handleEdit = () => {
+    setEditing(true);
+  };
+
+  const handleCheckbox = async (e, { checked }) => {
+    await props.updateTask(props.id, title, description, checked);
+  };
+
+  let cardStyle = {
+    width: "100%"
   };
 
   return (
-    <div className={ todo.status === 'terminada' ?  "card-terminado" : "card"}>
+    <div className={props.status === "terminada" ? "card-terminado" : "card"}>
       {editing ? (
-        <Card color="blue" style={sideBarStyle}>
+
+        <Card
+          color={
+            props.status === "todo"
+              ? "blue"
+              : props.status === "en_progreso"
+              ? "orange"
+              : "green"
+          }
+          style={cardStyle}
+        >
           <Card.Content>
+
             <Card.Header>
               {<Input value={title} onChange={e => setTitle(e.target.value)} />}
             </Card.Header>
-            <Card.Meta>{todo.createdAt + " - " + todo.updatedAt}</Card.Meta>
-            <Card.Description>
-              {
+            
+            <Card.Description>{
                 <Form>
-                  <TextArea
+                  <Form.TextArea
                     value={description}
                     rows={5}
                     width="100"
                     placeholder="Descripción"
                     onChange={e => setDescription(e.target.value)}
                   />
-                </Form>
-              }
+                </Form>}
             </Card.Description>
+
           </Card.Content>
+
           <Card.Content extra>
             <Form>
               <Form.Group widths="equal">
+
                 <Form.Field>
                   <Form.Select
                     fluid
                     label="Estatus"
                     options={options}
-                    placeholder="Estatus"
+                    placeholder={props.status}
+                    onChange={(e, data) => setStatus(data.value)}
                   />
                 </Form.Field>
+
                 <Form.Field>
-                  <Button
+                  <Form.Button
+                    type="button"
                     floated="right"
                     color="green"
-                    icon="edit"
-                    onClick={event => handleClick()}
-                  ></Button>
+                    icon="save"
+                    onClick={event => handleSave()}
+                  ></Form.Button>
                 </Form.Field>
+
               </Form.Group>
             </Form>
+
           </Card.Content>
-          <Card.Content extra></Card.Content>
         </Card>
       ) : (
-        <Card color="orange" style={sideBarStyle}>
+        <Card
+          color={
+            props.status === "todo"
+              ? "blue"
+              : props.status === "en_progreso"
+              ? "orange"
+              : "green"
+          }
+          style={cardStyle}
+        >
           <Card.Content>
+
             <Card.Header>{title}</Card.Header>
-            <Card.Meta>{ todo.status === 'Terminado' ? todo.createdAt + " - " + todo.updatedAt : todo.createdAt}</Card.Meta>
+
+            <Card.Meta>
+              {props.status === "terminada"
+                ? "Terminada: " + props.updatedAt
+                : "Creada: " + props.createdAt}
+            </Card.Meta>
+
             <Card.Description>{description}</Card.Description>
+
           </Card.Content>
+
           <Card.Content extra>
-            {estatus}
+            {status}
             <Button
+              type="button"
               floated="right"
               className="task-button"
               primary
               compact
-              size="mini"
               icon="edit"
-              onClick={event => handleClick()}
+              onClick={event => handleEdit()}
             ></Button>
+
             <Button
+              type="button"
               floated="right"
               className="task-button"
               negative
               compact
-              size="mini"
-              onClick={event => handleClick()}
+              onClick={e => {
+                if (
+                  window.confirm(
+                    "Seguro que deseas elimniar esta tarea?"
+                  )
+                )
+                  handleDelete()
+              }}
               icon="delete"
             ></Button>
+
           </Card.Content>
         </Card>
       )}
     </div>
   );
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    getTasks: () => dispatch(getTasks()),
+    deleteTask: id => dispatch(deleteTask(id)),
+    updateTask: (id, title, description, status) =>
+      dispatch(updateTask(id, title, description, status))
+  };
 };
 
-export default Task;
+export default connect(null, mapDispatchToProps)(Task);
