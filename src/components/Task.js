@@ -55,10 +55,6 @@ function Task(props) {
     setEditing(true);
   };
 
-  const handleCheckbox = async (e, { checked }) => {
-    await props.updateTask(props.id, title, description, checked);
-  };
-
   let cardStyle = {
     width: "100%"
   };
